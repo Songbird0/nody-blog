@@ -1,0 +1,66 @@
+extends layout
+
+block content
+  header.hero.is-medium.is-light
+    .hero-head
+      nav.navbar
+        .container
+          .navbar-brand
+            a.navbar-item(href='#') Rust &amp; WebAssembly
+            span#burg-leader.navbar-burger.burger(data-target="websiteSections")
+              span
+              span
+              span
+              span
+          #websiteSections.navbar-menu
+            .navbar-end
+              a.navbar-item(href='#') Accueil
+              a.navbar-item.is-active(href='#') Blog
+              a.navbar-item(href='#') Ressources
+              a.navbar-item(href='#') A propos
+    .hero-body
+      section.container.has-text-centered
+        h1.title Rust &amp; WebAssembly
+        h2.subtitle et plein d'autres trucs cool
+        p 
+          | Pour les sympatisans francophones de 
+          strong Rust, 
+          | vous trouverez ici l'actualité du langage, version après version et 
+          em en français
+          | .
+          br
+          | Pour tous les autres, vous pourrez y trouver mes expériences avec 
+          strong WebAssembly
+          | , quelques news à son sujet (principalement le support de wasm du côté de Rust), 
+          | puis viennent enfin tous les autres billets qui aborderont tout 
+          | ce qui touche de près ou de loin à la programmation en général.
+        p 
+          | Quoi qu'il en soit, que vous soyez de passage ou un habitué, je vous souhaite une bonne lecture !
+  main
+    ul.columns
+      each blogpost in blogposts
+        li.column
+          .box
+            article.media
+              .media-left
+                figure.image.is-128x128
+                  img(src="/static/images/rust-logo.png", alt="The Rust logo!")
+              .media-content
+                .content
+                  header
+                    h2.title= blogpost.title
+                    h3.subtitle= blogpost.description
+                  p Pug est un template engine génial !
+                  footer
+                    .field.is-grouped.is-grouped-multiline
+                      - for(step = 0; step < 2; step++)
+                        .control
+                          .tags.has-addons
+                            if step == 1
+                              span.tag.is-dark Publié le
+                              time.tag.is-warning= blogpost.publishDate
+                            else
+                              span.tag.is-dark Auteur
+                              span.tag.is-warning= blogpost.author
+  // script 
+    | document.querySelector("#websiteSections").addEventListener('click', )
