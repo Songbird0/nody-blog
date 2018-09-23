@@ -39,4 +39,5 @@ app.use(function(req, res, next) {
 // error handler
 app.use(handlers.genericErrorHandler);
 
+app.locals.pretty = app.get('env') === 'development' ? true : false;
 module.exports = app;

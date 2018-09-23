@@ -6,61 +6,107 @@ block content
       nav.navbar
         .container
           .navbar-brand
-            a.navbar-item(href='#') Rust &amp; WebAssembly
-            span#burg-leader.navbar-burger.burger(data-target="websiteSections")
+            - var homeTitle = "Rust & WebAssembly"
+            a.navbar-item(href="/")= homeTitle
+            span.navbar-burger.burger(target="website-sections")
               span
               span
               span
               span
-          #websiteSections.navbar-menu
+          #website-sections.navbar-menu
+            .navbar-start
+              a.navbar-item.is-active(href="/blog") Blog
+              .navbar-item.has-dropdown.is-hoverable
+                a.navbar-link(href="#", rel="nofollow") Divers
+                .navbar-dropdown.is-boxed
+                  a.navbar-item(href="/recherche") Rechercher un tag
+                  a.navbar-item(href="/resources") Ressources
+                  a.navbar-item(href="/about") À propos
             .navbar-end
-              a.navbar-item(href='#') Accueil
-              a.navbar-item.is-active(href='#') Blog
-              a.navbar-item(href='#') Ressources
-              a.navbar-item(href='#') A propos
+              .navbar-item
+                .field.is-grouped
+                  p.control
+                    a.button.is-info.is-outlined(href="/contact") Un p'tit message ?
     .hero-body
       section.container.has-text-centered
-        h1.title Rust &amp; WebAssembly
-        h2.subtitle et plein d'autres trucs cool
+        header
+          h1.title= homeTitle
+          h2.subtitle et plein d'autres trucs cool
         p 
           | Pour les sympatisans francophones de 
-          strong Rust, 
-          | vous trouverez ici l'actualité du langage, version après version et 
+          strong Rust
+          | , vous trouverez ici l'actualité du langage, version après version et 
           em en français
           | .
           br
           | Pour tous les autres, vous pourrez y trouver mes expériences avec 
           strong WebAssembly
-          | , quelques news à son sujet (principalement le support de wasm du côté de Rust), 
-          | puis viennent enfin tous les autres billets qui aborderont tout 
-          | ce qui touche de près ou de loin à la programmation en général.
+          | , quelques news à son sujet (principalement le support de 
+          abbr(title="WebAssembly") wasm
+          |  du côté de Rust), puis viennent enfin tous les autres billets qui aborderont tout ce qui touche de près ou de loin à la 
+          strong programmation 
+          | en général.
         p 
           | Quoi qu'il en soit, que vous soyez de passage ou un habitué, je vous souhaite une bonne lecture !
   main
     ul.columns
       each blogpost in blogposts
-        li.column
-          .box
-            article.media
-              .media-left
-                figure.image.is-128x128
-                  img(src="/static/images/rust-logo.png", alt="The Rust logo!")
-              .media-content
-                .content
-                  header
-                    h2.title= blogpost.title
-                    h3.subtitle= blogpost.description
-                  p Pug est un template engine génial !
-                  footer
-                    .field.is-grouped.is-grouped-multiline
-                      - for(step = 0; step < 2; step++)
-                        .control
-                          .tags.has-addons
-                            if step == 1
-                              span.tag.is-dark Publié le
-                              time.tag.is-warning= blogpost.publishDate
-                            else
-                              span.tag.is-dark Auteur
-                              span.tag.is-warning= blogpost.author
-  // script 
-    | document.querySelector("#websiteSections").addEventListener('click', )
+
+        mixin a(content, route)
+          if route
+            // Si ce tag est affiché dans la card du billet.
+            a.tag.is-link(href=route)= content
+          else
+            // Si nous traitons le tag affichant le nombre 
+              de tags non-affichés sur la card.
+            a.tag.is-link(href="#" rel="nofollow")= content
+
+        mixin tag_list
+          - var tagListLength = blogpost.tags.length
+          - var tagsRemaining = blogpost.tags.length - 3
+          if tagListLength > 3
+            - var message = "+" + tagsRemaining + " autre(s)"
+            .tags
+              - i = 1
+              each tag in blogpost.tags
+                if i == 3
+                  +a(tag.name, tag.route)
+                  - break
+                else
+                  +a(tag.name, tag.route)
+                - i += 1
+              if tagsRemaining > 0
+                +a(message)
+          else
+            .tags
+              each tag in blogpost.tags
+                  +a(tag.name, tag.route)
+
+        mixin build_blogpost(blogpost)
+          li.column
+            .box
+              article.media
+                .media-left
+                  figure.image.is-128x128
+                    img(src="/static/images/rust-logo.png", alt="The Rust logo!")
+                .media-content
+                  .content
+                    header
+                      h2.title= blogpost.title
+                      h3.subtitle= blogpost.description
+                    p Pug est un template engine génial !
+                    footer
+                      .field.is-grouped.is-grouped-multiline
+                        - for(step = 0; step < 2; step++)
+                          .control
+                            .tags.has-addons
+                              if step == 1
+                                span.tag.is-dark Publié le
+                                time.tag.is-link= blogpost.publishDate
+                              else
+                                span.tag.is-dark Auteur
+                                span.tag.is-link= blogpost.author
+                      +tag_list
+        +build_blogpost(blogpost)
+  // script | document.querySelector("#websiteSections").addEventListener('click', )
+
