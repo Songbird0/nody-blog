@@ -5,6 +5,19 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const mongoose = require('mongoose');
+
+/* Mongo database connection */
+
+mongoose.connect('mongodb://localhost/mydb', { useNewUrlParser: true });
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'Something went wrong:'));
+db.on('open', function() {
+	console.log('Connected!');
+});
+
+/* Mongo database connection ^ */
 
 // Internal
 
