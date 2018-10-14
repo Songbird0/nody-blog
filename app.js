@@ -13,16 +13,13 @@ mongoose.connect('mongodb://localhost/mydb', { useNewUrlParser: true });
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Something went wrong:'));
-db.on('open', function() {
-	console.log('Connected!');
-});
 
 /* Mongo database connection ^ */
 
 // Internal
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const testRouter = require('./routes/test');
 
 const handlers = require('./middleware/internal-handlers');
 
@@ -40,7 +37,11 @@ app.use(cookieParser());
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/recherche', researchRouter);
+app.use('/ressources', resourcesRouter);
+app.use('/contact', aboutRouter);
+app.use('/admin', adminRouter);
+app.use('/test', testRouter);
 
 /*
 // catch 404 and forward to error handler
