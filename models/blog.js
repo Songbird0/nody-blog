@@ -5,7 +5,18 @@ const blogTagSchema = new mongoose.Schema({
         "route": String
     })
     .method({
-        "getRelatedBlogposts": function () {},
+        "getRelatedBlogposts": function (cb) {
+        	BlogPost
+        	.findOne()
+        	.where({
+        		"meta": {
+        			"tagList": {
+        				"$all": [this.tagName]
+        			}
+        		}
+        	})
+        	.exec(cb);
+        },
     });
 
 const blogpostSchema = new mongoose.Schema({
@@ -30,56 +41,75 @@ const blogpostSchema = new mongoose.Schema({
         }
     })
     .method({
-        "beHidden": function (issue, cb) {
-            this.model("BlogPost")
-                .updateOne({
+        "beHidden": function (cb) {
+        	BlogPost
+        	.where({
                     "meta": {
                         "hidden": false,
-                        "issue": issue
+                        "issue": this.issue
                     }
-                }, {
+                })
+        	.updateOne({
                     "meta": {
                         "hidden": true
                     }
-                }, {}, cb);
+                })
+        	.exec(cb)
         },
 
-        "bePublic": function (issue, cb) {
-            this.model("BlogPost")
-                .updateOne({
-                    "meta": {
-                        "hidden": true,
-                        "issue": issue
-                    }
-                }, {
+        "isHidden": function(cb) {
+        	BlogPost
+        	.findOne()
+        	.where({
+        		"meta": {
+        			"hidden": true
+        		}
+        	})
+        	.exec(cb)
+        },
+
+        "bePublic": function (cb) {
+        	BlogPost
+        	.where({
                     "meta": {
                         "hidden": false
                     }
-                }, {}, cb);
-        }
-
-        "beMonetized": function (issue, cb) {
-            this.model("BlogPost")
-                .updateOne({
-                    "monetized": false,
+                })
+        	.updateOne({
                     "meta": {
-                        "issue": issue
+                        "hidden": true,
+                        "issue": this.issue
                     }
-                }, {
-                    "monetized": true
-                }, {}, cb);
+                })
+        	.exec(cb)
         },
 
-        "beFree": function (issue) {
-            this.model("BlogPost")
-                .updateOne({
+        "beMonetized": function (cb) {
+        	BlogPost
+        	.where({
+                    "monetized": true
+                })
+        	.updateOne({
+                    "monetized": false,
+                    "meta": {
+                        "issue": this.issue
+                    }
+                })
+        	.exec(cb)
+        },
+
+        "beFree": function (cb) {
+        	BlogPost
+        	.where({
+                    "monetized": false
+                })
+        	.updateOne({
                     "monetized": true,
                     "meta": {
-                        "issue": issue
+                        "issue": this.issue
                     }
-                }, {
-                    "monetized": false
-                }, {}, cb);
+                })
+        	.exec(cb)
         },
     });
 
@@ -91,3 +121,7 @@ const blogSchema = new mongoose.Schema({
     "subtitle": String,
     "blogposts": [blogpostSchema]
 });
+
+const BlogTag = mongoose.model("BlogTag", blogTagSchema);
+const BlogPost = mongoose.model("BlogPost", blogpostSchema);
+const Blog = mongoose.model("Blog", blogSchema);
